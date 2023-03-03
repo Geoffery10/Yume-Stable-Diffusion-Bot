@@ -1,3 +1,6 @@
+![Icon_Yume](https://user-images.githubusercontent.com/43981091/222807185-35707861-2d50-4d38-b1b8-80de61fe7c4a.png)
+
+
 # Yume Stable Diffusion Bot
 A Discord Bot that Connects to [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui) to generate AI images
 
