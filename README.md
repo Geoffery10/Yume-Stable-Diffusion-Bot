@@ -13,4 +13,4 @@ A Discord Bot that Connects to [AUTOMATIC1111/stable-diffusion-webui](https://gi
 
  
 ## License
-WIP
+Yume Stable Diffusion Bot is protected under [GNU General Public License v3.0](https://github.com/Geoffery10/Yume-Stable-Diffusion-Bot/blob/main/LICENSE)
