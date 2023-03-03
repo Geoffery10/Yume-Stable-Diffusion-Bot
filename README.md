@@ -1,4 +1,6 @@
-![Icon_Yume](https://user-images.githubusercontent.com/43981091/222807185-35707861-2d50-4d38-b1b8-80de61fe7c4a.png)
+<p align="center">
+<img align="center" width="200" height="200" src="https://user-images.githubusercontent.com/43981091/222807185-35707861-2d50-4d38-b1b8-80de61fe7c4a.png">
+</p>
 
 
 # Yume Stable Diffusion Bot
