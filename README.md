@@ -4,7 +4,7 @@
 
 
 # Yume Stable Diffusion Bot
-A Discord Bot that Connects to [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui) to generate AI images. 
+A Discord Bot that interfaces with the [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui) api to generate AI images. 
 
 ### Warning this bot is still under constuction 
 <img align="center" width="200" height="200" src="https://user-images.githubusercontent.com/43981091/222808107-89a57928-82b6-4e81-ba0e-53cc263b73bf.png">
