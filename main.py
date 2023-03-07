@@ -108,8 +108,8 @@ myid = '<@1043957906921492562>'
 # This should have most of the payload options
 # ================================== #
 @tree.command(description="Dream of an Image")
-async def dream(interaction: discord.Interaction, prompt: str, negative: str = "", steps: int = 20, 
-                seed: int = -1, cfg_scale: int = 7, width: int = 512, height: int = 640):
+async def dream(interaction: discord.Interaction, prompt: str, negative: str = "", easy_negative: bool = True,
+                steps: int = 20, seed: int = -1, cfg_scale: int = 7, width: int = 512, height: int = 640):
     # Dream
     print(await sendLog(log=f'{interaction.user.name} dreaming of {prompt}', client=client))
 
@@ -123,6 +123,11 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
         width = 800
     if height > 800:
         height = 800
+
+    if easy_negative:
+        if negative != "":
+            negative += ", "
+        negative += "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, artist name"
 
     # Add the command to the queue
     payload = {
