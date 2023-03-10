@@ -103,8 +103,7 @@ class EditModal(ui.Modal, title='Edit Prompt'):
                         placeholder='Enter your prompt here',
                         min_length=1,
                         max_length=2000,
-                        required=True, 
-                        default="Test")
+                        required=True)
     answer = ui.TextInput(label='Negative_Prompt', style=discord.TextStyle.paragraph)
 
     async def on_submit(self, interaction: discord.Interaction):
