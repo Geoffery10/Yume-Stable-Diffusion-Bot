@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 import json
 from file_management import store_image, parseImage
+from prompt_parser import ez_negative_long, parse_ez_negative
 
 
 async def txt2img(payload=None, enable_hr=False, denoising_strength=0, firstphase_width=0,
@@ -76,6 +77,9 @@ async def txt2img(payload=None, enable_hr=False, denoising_strength=0, firstphas
 
 
 async def process_request(interaction, payload, type):
+    # Check negative prompt for ez negative
+    if "easy_negative" in payload['negative_prompt']:
+        payload['negative_prompt'] = parse_ez_negative(payload['negative_prompt'])
     if 'txt2img' in type:
         from txt2img import txt2img
         response = await txt2img(payload=payload)
@@ -99,6 +103,9 @@ async def process_request(interaction, payload, type):
         # Send sus
         await sus_embed(interaction, payload, response, file, info)
     else:
+        # Replace negative prompt with ez negative
+        if ez_negative_long(info['negative_prompt']):
+            info['negative_prompt'] = parse_ez_negative(info['negative_prompt'])
         description = f"prompt: {info['prompt']}"
         if info['negative_prompt'] != "":
             description += f"\nnegative: {info['negative_prompt']}"

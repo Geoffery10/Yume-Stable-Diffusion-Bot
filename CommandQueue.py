@@ -7,6 +7,7 @@ from discord.ext import commands
 from datetime import datetime
 from file_management import store_image, parseImage
 import buttons
+from prompt_parser import ez_negative_long, parse_ez_negative
 
 class CommandQueue:
     def __init__(self):
@@ -52,6 +53,9 @@ class CommandQueue:
             # Send sus
             await sus_embed(interaction, payload, response, file, info)
         else:
+            # Replace negative prompt with ez negative
+            if ez_negative_long(info['negative_prompt']):
+                info['negative_prompt'] = parse_ez_negative(info['negative_prompt'])
             description = f"prompt: {info['prompt']}"
             if info['negative_prompt'] != "":
                 description += f"\nnegative: {info['negative_prompt']}"

@@ -1,6 +1,7 @@
 import discord
 from txt2img import process_request
 from random import randint
+from prompt_parser import parse_ez_negative
 
 class TryAgain(discord.ui.Button):
     def __init__(self):
@@ -87,6 +88,10 @@ async def parse_embed(input_dict):
     neg_prompt_start = input_dict['description'].find(
         "negative:") + len("negative:")
     negative_prompt = input_dict['description'][neg_prompt_start:].strip()
+
+    # parse ez negative
+    if "easy_negative" in prompt:
+        prompt = parse_ez_negative(prompt)
 
     # generate new seed
     footer_values["seed"] = randint(0, 2 ** 32 - 1)
