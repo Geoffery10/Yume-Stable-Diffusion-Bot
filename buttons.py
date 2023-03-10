@@ -36,7 +36,28 @@ class EditButton(discord.ui.Button):
         super().__init__(style=discord.ButtonStyle.secondary, label="Edit")
 
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.send_message("Soon this will open a menu to let you edit your prompt.", ephemeral=True)
+        # Acknowledge the interaction
+        await interaction.response.defer()
+
+        # Get the embed from the original message
+        embed = interaction.message.embeds[0]
+
+        # Convert embed to dict
+        embed = embed.to_dict()
+
+        # Log embed
+        print('Embed: ')
+        print(embed)
+
+        # Parse the embed
+        payload = await decode(embed)
+        print('Payload: ')
+        print(payload)
+
+        # Open a modal to edit the prompt
+        # TODO: Make this work
+
+        await interaction.followup.send("Soon this will open a menu to let you edit your prompt.", ephemeral=True)
 
 class DeleteButton(discord.ui.Button):
     def __init__(self):
