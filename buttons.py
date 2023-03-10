@@ -1,4 +1,5 @@
 import discord
+from exceptiongroup import catch
 from txt2img import process_request
 from random import randint
 
@@ -30,12 +31,45 @@ class TryAgain(discord.ui.Button):
         await process_request(interaction, payload, 'txt2img')
 
 
-class RedButton(discord.ui.Button):
+class EditButton(discord.ui.Button):
     def __init__(self):
-        super().__init__(style=discord.ButtonStyle.red, label="Red button")
+        super().__init__(style=discord.ButtonStyle.secondary, label="Edit")
 
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.send_message("You pressed the red button!")
+        await interaction.response.send_message("Soon this will open a menu to let you edit your prompt.", ephemeral=True)
+
+class DeleteButton(discord.ui.Button):
+    def __init__(self):
+        super().__init__(style=discord.ButtonStyle.danger, label="Delete")
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+
+        try:
+            # Get the embed from the original message
+            embed = interaction.message.embeds[0]
+
+            # Delete the original message
+            await interaction.message.delete()
+
+            # remove the image from the embed
+            embed.set_image(url="")
+
+            # add a new field to the embed saying that the image has been deleted
+            embed.add_field(name="Image deleted", value="This image has been deleted. Restoring is not yet possible.")
+
+            # Send the embed
+            await interaction.followup.send(embed=embed)
+        except Exception as e:
+            print(e)
+            await interaction.followup.send("Something went wrong while deleting the image. Please try again later.", ephemeral=True)
+
+class UpscaleButton(discord.ui.Button):
+    def __init__(self):
+        super().__init__(style=discord.ButtonStyle.blurple, label="Upscale")
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_message("Soon this will upscale the image.", ephemeral=True)
 
 
 async def parse_embed(input_dict):
@@ -47,14 +81,13 @@ async def parse_embed(input_dict):
         footer_values[key.strip()] = float(value.strip())
 
     # parse description
-    description = input_dict["description"]
-    prompt = ""
-    negative_prompt = ""
-    for item in description.split("\n"):
-        if "prompt:" in item:
-            prompt = item.split(":")[1].strip()
-        elif "negative:" in item:
-            negative_prompt = item.split(":")[1].strip()
+    prompt_start = input_dict['description'].find("prompt:") + len("prompt:")
+    prompt_end = input_dict['description'].find("negative:")
+    prompt = input_dict['description'][prompt_start:prompt_end].strip()
+
+    neg_prompt_start = input_dict['description'].find(
+        "negative:") + len("negative:")
+    negative_prompt = input_dict['description'][neg_prompt_start:].strip()
 
     # generate new seed
     footer_values["seed"] = randint(0, 2 ** 32 - 1)

@@ -130,6 +130,10 @@ class txt2img_Buttons(discord.ui.View):
         super().__init__()
         import buttons
         self.add_item(buttons.TryAgain())
+        self.add_item(buttons.EditButton())
+        self.add_item(buttons.DeleteButton())
+        self.add_item(buttons.UpscaleButton())
+        
 
 
 if __name__ == "__main__":
