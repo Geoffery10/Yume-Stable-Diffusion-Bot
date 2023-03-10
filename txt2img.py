@@ -77,9 +77,6 @@ async def txt2img(payload=None, enable_hr=False, denoising_strength=0, firstphas
 
 
 async def process_request(interaction, payload, type):
-    # Check negative prompt for ez negative
-    if "easy_negative" in payload['negative_prompt']:
-        payload['negative_prompt'] = parse_ez_negative(payload['negative_prompt'])
     if 'txt2img' in type:
         from txt2img import txt2img
         response = await txt2img(payload=payload)

@@ -11,8 +11,7 @@ import os
 import asyncio
 from CommandQueue import CommandQueue
 from styles import styles
-
-from txt2img import txt2img
+from sd_requests import sd_request
 
 command_queue = CommandQueue()
 
@@ -123,6 +122,12 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
         width = 800
     if height > 800:
         height = 800
+    if width < 100:
+        width = 100
+    if height < 100:
+        height = 100
+    if steps < 1:
+        steps = 1
 
     if easy_negative:
         if negative != "":
@@ -141,7 +146,7 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
     }
 
     # Add the command to the queue
-    await command_queue.put(interaction, payload, "txt2img")
+    await sd_request(interaction, payload, "txt2img")
 
 @tree.command(description="Send something sus")
 async def sus(interaction: discord.Interaction):
@@ -156,7 +161,7 @@ async def sus(interaction: discord.Interaction):
             "prompt": "(masterpiece), best quality, highres, absurdres, 1other, amongus <lora:amongUsLORAV1_v10:0.8>",
             "steps": 20
         }
-    await command_queue.put(interaction, payload, "txt2img")
+    await sd_request(interaction, payload, "txt2img")
 
 
 
