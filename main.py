@@ -9,11 +9,8 @@ from dotenv import load_dotenv
 from loggingChannel import sendLog
 import os
 import asyncio
-from CommandQueue import CommandQueue
 from styles import styles
 from sd_requests import sd_request
-
-command_queue = CommandQueue()
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -29,9 +26,6 @@ intents.reactions = True
 class MyClient(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        # Create the queue for command processing
-        self.command_queue = command_queue
 
     async def on_ready(self):
         # Get the guild object
