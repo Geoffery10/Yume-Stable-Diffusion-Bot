@@ -1,5 +1,4 @@
 import discord
-from exceptiongroup import catch
 from txt2img import process_request
 from random import randint
 
