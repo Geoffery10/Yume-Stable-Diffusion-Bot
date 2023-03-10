@@ -2,9 +2,13 @@
 import os
 import requests
 import base64
+import discord
 from PIL import Image
 from io import BytesIO
 from dotenv import load_dotenv
+from datetime import datetime
+import json
+from file_management import store_image, parseImage
 
 
 async def txt2img(payload=None, enable_hr=False, denoising_strength=0, firstphase_width=0,
@@ -69,6 +73,63 @@ async def txt2img(payload=None, enable_hr=False, denoising_strength=0, firstphas
     response = requests.post(URL, headers=headers, json=payload)
 
     return response
+
+
+async def process_request(interaction, payload, type):
+    if 'txt2img' in type:
+        from txt2img import txt2img
+        response = await txt2img(payload=payload)
+        # Send Image
+        image = await parseImage(response)
+        file = discord.File(BytesIO(image), filename="temp.png")
+
+    elif 'img2img' in type:
+        # file = await img2img(payload=payload)
+        # await interaction.followup.send(file=file)
+        await interaction.followup.send('img2img is not yet implemented')
+        return None
+
+    # Create embed
+    # Get current time
+    now = datetime.now()
+    info = json.loads(response.json()['info'])
+    print(info)
+    # Check if sus otherwise continue
+    if info['prompt'] == "(masterpiece), best quality, highres, absurdres, 1other, amongus <lora:amongUsLORAV1_v10:0.8>" and info['negative_prompt'] == "":
+        # Send sus
+        await sus_embed(interaction, payload, response, file, info)
+    else:
+        description = f"prompt: {info['prompt']}"
+        if info['negative_prompt'] != "":
+            description += f"\nnegative: {info['negative_prompt']}"
+        embed = discord.Embed(color=6301830,
+                                description=description, timestamp=now)
+        embed.set_author(
+            name=interaction.user.nick, icon_url=interaction.user.avatar, url="")
+        embed.set_footer(
+            text=f"seed:{info['seed']} • width:{info['width']} • height:{info['height']} • steps:{info['steps']} • cfg_scale:{info['cfg_scale']}")
+        # Attach file to embed
+        embed.set_image(url="attachment://temp.png")
+
+        # Send embed
+        await interaction.followup.send(embed=embed, file=file, view=txt2img_Buttons())
+
+    await store_image(response)
+
+
+async def sus_embed(interaction, payload, response, file, info):
+    # IF SUS THEN SEND ONLY IMAGE AND SEED
+    # Send image on its own
+    await interaction.followup.send(file=file)
+    # Send seed as censored message
+    await interaction.channel.send(f"||{info['seed']}||")
+
+
+class txt2img_Buttons(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+        import buttons
+        self.add_item(buttons.TryAgain())
 
 
 if __name__ == "__main__":

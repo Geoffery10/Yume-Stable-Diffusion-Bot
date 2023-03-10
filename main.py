@@ -44,8 +44,8 @@ class MyClient(discord.Client):
             await tree.sync(guild=client.get_guild(guild_id))
         print("Synced trees")
 
-        # Start the process_commands loop
-        self.loop.create_task(self.process_commands())
+        # Start the process_request loop
+        self.loop.create_task(self.process_request())
 
         # Loaded
         print(await sendLog(log=(f'{client.user} has connected to Discord!'), client=client))
@@ -62,7 +62,7 @@ class MyClient(discord.Client):
         print(
             f'{message.author.name} [{message.author.id}] sent: {message.content} on Channel: {message.channel.id}')
 
-    async def process_commands(self):
+    async def process_request(self):
         await self.wait_until_ready()
         while not self.is_closed():
             try:
@@ -73,7 +73,7 @@ class MyClient(discord.Client):
             else:
                 if message.author.bot:
                     continue
-                await self.process_commands(message)
+                await self.process_request(message)
 
 
 async def updateStatus():
@@ -157,7 +157,6 @@ async def sus(interaction: discord.Interaction):
             "steps": 20
         }
     await command_queue.put(interaction, payload, "txt2img")
-
 
 
 
