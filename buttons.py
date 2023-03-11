@@ -11,6 +11,7 @@ class TryAgain(discord.ui.Button):
         super().__init__(style=discord.ButtonStyle.green, label="Try again")
 
     async def callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         # Get the embed from the original message
         embed = interaction.message.embeds[0]
 
@@ -26,12 +27,14 @@ class TryAgain(discord.ui.Button):
         print('Payload: ')
         print(payload)
 
-        # Acknowledge the interaction
-        await interaction.response.defer()
-
         
         # Send request to stable diffusion
         await sd_request(interaction, payload, 'txt2img')
+        # Respond to the interaction with nothing incase it fails
+        try:
+            await interaction.response.send_message("")
+        except:
+            pass
 
 
 class DeleteButton(discord.ui.Button):
@@ -59,6 +62,12 @@ class DeleteButton(discord.ui.Button):
         except Exception as e:
             print(e)
             await interaction.followup.send("Something went wrong while deleting the image. Please try again later.", ephemeral=True)
+        
+        try:
+            await interaction.response.send_message("")
+        except:
+            pass
+
 
 class UpscaleButton(discord.ui.Button):
     def __init__(self):
@@ -66,6 +75,10 @@ class UpscaleButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.send_message("Soon this will upscale the image.", ephemeral=True)
+        try:
+            await interaction.response.send_message("")
+        except:
+            pass
 
 
 class EditButton(discord.ui.Button):
@@ -73,9 +86,6 @@ class EditButton(discord.ui.Button):
         super().__init__(style=discord.ButtonStyle.secondary, label="Edit")
 
     async def callback(self, interaction: discord.Interaction):
-        # Acknowledge the interaction
-        # await interaction.response.defer()
-
         # Get the embed from the original message
         embed = interaction.message.embeds[0]
 
@@ -95,6 +105,11 @@ class EditButton(discord.ui.Button):
         # Pass the payload to the EditModal constructor
         edit_modal = EditModal(payload=payload)
         await interaction.response.send_modal(edit_modal)
+
+        try:
+            await interaction.response.send_message("")
+        except:
+            pass
 
 
 class EditModal(ui.Modal, title='Edit Prompt'):
@@ -177,7 +192,10 @@ class EditModal(ui.Modal, title='Edit Prompt'):
         
 
         # Acknowledge the interaction
-        await interaction.response.defer()
+        try:
+            await interaction.response.defer()
+        except:
+            pass
 
         # Send the request to stable diffusion
         await sd_request(interaction, self.payload, 'txt2img', defer=True)

@@ -4,7 +4,7 @@ import txt2img
 
 async def sd_request(interaction, payload, type="txt2img", defer=True):
     # Parse the payload
-    payload = await keyword_decode(payload)
+    payload = await keyword_decode(payload, interaction)
     # Validate the payload
     payload, valid = await validate_payload(payload)
 
@@ -74,9 +74,15 @@ async def parse_payload(enable_hr=False, denoising_strength=0, firstphase_width=
 
     return payload
 
-async def keyword_decode(payload):
+async def keyword_decode(payload, interaction):
     if "easy_negative" in payload['negative_prompt']:
         payload['negative_prompt'] = parse_ez_negative(payload['negative_prompt'])
+
+    # Check if channel is not nsfw
+    if interaction.channel.is_nsfw() == False:
+        # NSFW to the beginning of negative_prompt if it is not already
+        if "nsfw" not in payload['negative_prompt']:
+            payload['negative_prompt'] = "nsfw, " + payload['negative_prompt']
 
     return payload
 
