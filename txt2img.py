@@ -76,7 +76,7 @@ async def txt2img(payload=None, enable_hr=False, denoising_strength=0, firstphas
     return response
 
 
-async def process_request(interaction, payload, type):
+async def process_request(interaction, payload, type, defer=True):
     if 'txt2img' in type:
         from txt2img import txt2img
         response = await txt2img(payload=payload)
@@ -116,7 +116,10 @@ async def process_request(interaction, payload, type):
         embed.set_image(url="attachment://temp.png")
 
         # Send embed
-        await interaction.followup.send(embed=embed, file=file, view=txt2img_Buttons())
+        if defer:
+            await interaction.followup.send(embed=embed, file=file, view=txt2img_Buttons())
+        else:
+            await interaction.channel.send(embed=embed, file=file, view=txt2img_Buttons())
 
     await store_image(response)
 

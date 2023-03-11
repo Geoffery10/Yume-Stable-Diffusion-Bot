@@ -124,7 +124,7 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
     }
 
     # Add the command to the queue
-    await sd_request(interaction, payload, "txt2img")
+    await sd_request(interaction, payload, "txt2img", defer=True)
 
 @tree.command(description="Send something sus")
 async def sus(interaction: discord.Interaction):

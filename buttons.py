@@ -1,3 +1,4 @@
+import random
 import discord
 from discord import ui
 from random import randint
@@ -91,24 +92,95 @@ class EditButton(discord.ui.Button):
         print(payload)
 
         # Open a modal to edit the prompt
-        edit_modal = EditModal()
+        # Pass the payload to the EditModal constructor
+        edit_modal = EditModal(payload=payload)
         await interaction.response.send_modal(edit_modal)
-
-        await interaction.followup.send("Soon this will open a menu to let you edit your prompt.", ephemeral=True)
 
 
 class EditModal(ui.Modal, title='Edit Prompt'):
-    name = ui.TextInput(label='Prompt', 
-                        style=discord.TextStyle.paragraph, 
-                        placeholder='Enter your prompt here',
-                        min_length=1,
-                        max_length=2000,
-                        required=True, 
-                        default="Test")
-    answer = ui.TextInput(label='Negative_Prompt', style=discord.TextStyle.paragraph)
+    def __init__(self, payload, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.payload = payload
+        # Set the default value for the prompt TextInput
+        self.prompt.default = payload.get('prompt', '')
+        # Set the default value for the answer TextInput
+        self.negative_prompt.default = payload.get('negative_prompt', '')
+        # Set the default value for the steps TextInput parse to string to prevent errors
+        print(int(payload.get('steps', 20)))
+        self.steps.default = str(int(payload.get('steps', 20)))
+        # Set the default value for the width TextInput
+        print(int(payload.get('width', 512)))
+        self.width.default = str(int(payload.get('width', 512)))
+        # Set the default value for the height TextInput
+        print(int(payload.get('height', 640)))
+        self.height.default = str(int(payload.get('height', 640)))
+
+
+    prompt = ui.TextInput(label='Prompt',
+                          style=discord.TextStyle.paragraph,
+                          placeholder='Enter your prompt here',
+                          min_length=1,
+                          max_length=2000,
+                          required=True)
+    negative_prompt = ui.TextInput(label='Negative Prompt',
+                                    style=discord.TextStyle.paragraph,
+                                    placeholder='Enter your negative prompt here',
+                                    min_length=0,
+                                    max_length=2000,
+                                    required=False)
+    # Steps integer input 
+    steps = ui.TextInput(label='Steps',
+                         style=discord.TextStyle.short,
+                            placeholder='Enter the number of steps',
+                            min_length=1,
+                            max_length=2,
+                            required=True)
+    # width integer input
+    width = ui.TextInput(label='Width',
+                            style=discord.TextStyle.short,
+                            placeholder='Enter the width of the image',
+                            min_length=1,
+                            max_length=4,
+                            required=True)
+    # height integer input
+    height = ui.TextInput(label='Height',
+                            style=discord.TextStyle.short,
+                            placeholder='Enter the height of the image',
+                            min_length=1,
+                            max_length=4,
+                            required=True)
+    
+
 
     async def on_submit(self, interaction: discord.Interaction):
-        await interaction.response.send_message(f'Thanks for your response, {self.name}!', ephemeral=True)
+        # Get the values from the text inputs
+        prompt = self.prompt.value
+        negative_prompt = self.negative_prompt.value
+
+        # Update the payload with the new values
+        self.payload['prompt'] = prompt
+        self.payload['negative_prompt'] = negative_prompt
+        # Parse the steps value to an integer
+        steps = int(self.steps.value)
+        # Update the payload with the new value
+        self.payload['steps'] = steps
+        # Parse the width value to an integer
+        width = int(self.width.value)
+        # Update the payload with the new value
+        self.payload['width'] = width
+        # Parse the height value to an integer
+        height = int(self.height.value)
+        # Update the payload with the new value
+        self.payload['height'] = height
+
+        # TODO: ADD CFG SCALE and SEED
+        
+
+        # Acknowledge the interaction
+        await interaction.response.defer()
+
+        # Send the request to stable diffusion
+        await sd_request(interaction, self.payload, 'txt2img', defer=True)
 
     async def on_error(self, interaction: discord.Interaction, error):
         await interaction.response.send_message(f'An error occurred: {error}', ephemeral=True)

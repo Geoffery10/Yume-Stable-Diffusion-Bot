@@ -2,7 +2,7 @@
 from prompt_parser import parse_ez_negative
 import txt2img
 
-async def sd_request(interaction, payload, type="txt2img"):
+async def sd_request(interaction, payload, type="txt2img", defer=True):
     # Parse the payload
     payload = await keyword_decode(payload)
     # Validate the payload
@@ -11,7 +11,7 @@ async def sd_request(interaction, payload, type="txt2img"):
     if valid:
         # Start a new thread to send the request
         if type == "txt2img":
-            await txt2img.process_request(interaction=interaction, payload=payload, type=type)
+            await txt2img.process_request(interaction=interaction, payload=payload, type=type, defer=defer)
         elif type == "img2img":
             await interaction.followup.send('img2img is not yet implemented')
         elif type == "pix2pix":
