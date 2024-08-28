@@ -86,7 +86,7 @@ myid = '<@1043957906921492562>'
 # ================================== #
 @tree.command(description="Dream of an Image")
 async def dream(interaction: discord.Interaction, prompt: str, negative: str = "", easy_negative: bool = True,
-                steps: int = 20, seed: int = -1, cfg_scale: int = 7, width: int = 512, height: int = 640):
+                steps: int = 20, seed: int = -1, cfg_scale: int = 7, width: int = 816, height: int = 1024):
     # Dream
     print(await sendLog(log=f'{interaction.user.name} dreaming of {prompt}', client=client))
 
@@ -94,12 +94,12 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
     await interaction.response.defer()
 
     # Nerf dangerous commands
-    if steps > 50:
-        steps = 50
-    if width > 800:
-        width = 800
-    if height > 800:
-        height = 800
+    if steps > 30:
+        steps = 30
+    if width > 1028:
+        width = 1028
+    if height > 1028:
+        height = 1028
     if width < 100:
         width = 100
     if height < 100:
@@ -110,7 +110,8 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
     if easy_negative:
         if negative != "":
             negative += ", "
-        negative += "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, artist name"
+        negative += "fewer digits, extra digits"
+        prompt = "score_9, score_8_up, score_7_up, " + prompt
 
     # Add the command to the queue
     payload = {

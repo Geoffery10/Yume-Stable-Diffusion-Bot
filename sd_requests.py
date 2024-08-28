@@ -81,9 +81,10 @@ async def keyword_decode(payload, interaction):
     # Check if channel is not nsfw
     if interaction.channel.is_nsfw() == False:
         # NSFW to the beginning of negative_prompt if it is not already
-        if "nsfw" not in payload['negative_prompt']:
-            payload['negative_prompt'] = "nsfw, " + payload['negative_prompt']
-
+        if "rating_safe" not in payload['prompt']:
+            payload['prompt'] = "rating_safe, " + payload['prompt']
+        if "rating_safe" not in payload['negative_prompt']:
+            payload['negative_prompt'] = "rating_explicit, " + payload['negative_prompt']
     return payload
 
 async def validate_payload(payload):

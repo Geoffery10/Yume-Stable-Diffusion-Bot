@@ -17,7 +17,7 @@ async def txt2img(payload=None, enable_hr=False, denoising_strength=0, firstphas
             hr_second_pass_steps=0, hr_resize_x=0, hr_resize_y=0, prompt="warning sign",
             styles=[], seed=-1, subseed=-1, subseed_strength=0,
             seed_resize_from_h=-1, seed_resize_from_w=-1, sampler_name="",
-            batch_size=1, n_iter=1, steps=20, cfg_scale=7, width=512, height=512,
+            batch_size=1, n_iter=1, steps=20, cfg_scale=7, width=816, height=1024,
             restore_faces=False, tiling=False, negative_prompt="", eta=0,
             s_churn=0, s_tmax=0, s_tmin=0, s_noise=1, override_settings={},
             override_settings_restore_afterwards=True, script_args=[], sampler_index="Euler"):
