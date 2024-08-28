@@ -5,21 +5,10 @@ from prompt_parser import parse_ez_negative
 
 
 async def decode(input_dict):
-    # parse footer
-    footer = input_dict["footer"]["text"]
-    footer_values = {}
-    for item in footer.split(" • "):
-        key, value = item.split(":")
-        footer_values[key.strip()] = float(value.strip())
+    footer_values = await extract_footer(input_dict)
 
     # parse description
-    prompt_start = input_dict['description'].find("prompt:") + len("prompt:")
-    prompt_end = input_dict['description'].find("negative:")
-    prompt = input_dict['description'][prompt_start:prompt_end].strip()
-
-    neg_prompt_start = input_dict['description'].find(
-        "negative:") + len("negative:")
-    negative_prompt = input_dict['description'][neg_prompt_start:].strip()
+    prompt, negative_prompt = await extract_prompt(input_dict)
 
     # parse ez negative
     if "easy_negative" in prompt:
@@ -68,3 +57,21 @@ async def decode(input_dict):
     }
 
     return payload
+
+async def extract_footer(input_dict):
+    footer = input_dict["footer"]["text"]
+    footer_values = {}
+    for item in footer.split(" • "):
+        key, value = item.split(":")
+        footer_values[key.strip()] = float(value.strip())
+    return footer_values
+
+async def extract_prompt(input_dict):
+    prompt_start = input_dict['description'].find("prompt:") + len("prompt:")
+    prompt_end = input_dict['description'].find("negative:")
+    prompt = input_dict['description'][prompt_start:prompt_end].strip()
+
+    neg_prompt_start = input_dict['description'].find(
+        "negative:") + len("negative:")
+    negative_prompt = input_dict['description'][neg_prompt_start:].strip()
+    return prompt,negative_prompt
