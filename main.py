@@ -1,14 +1,9 @@
-import io
 import json
 import discord
-from discord import ActionRow, app_commands
-from discord.app_commands import Choice
-from discord.ext import commands
-from discord import SelectMenu, SelectOption
+from discord import app_commands
 from dotenv import load_dotenv
 from loggingChannel import sendLog
 import os
-import asyncio
 from styles import styles
 from sd_requests import sd_request
 
