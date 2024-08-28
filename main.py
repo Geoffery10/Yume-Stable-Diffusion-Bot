@@ -127,20 +127,20 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
     # Add the command to the queue
     await sd_request(interaction, payload, "txt2img", defer=True)
 
-@tree.command(description="Send something sus")
-async def sus(interaction: discord.Interaction):
-    # Among Us
-    print(await sendLog(log=f'{interaction.user.name} Sus!', client=client))
+# @tree.command(description="Send something sus")
+# async def sus(interaction: discord.Interaction):
+#     # Among Us
+#     print(await sendLog(log=f'{interaction.user.name} Sus!', client=client))
 
-    # Acknowledge the interaction
-    await interaction.response.defer()
+#     # Acknowledge the interaction
+#     await interaction.response.defer()
 
-    # Add the command to the queue
-    payload = {
-            "prompt": "(masterpiece), best quality, highres, absurdres, 1other, amongus <lora:amongUsLORAV1_v10:0.8>",
-            "steps": 20
-        }
-    await sd_request(interaction, payload, "txt2img")
+#     # Add the command to the queue
+#     payload = {
+#             "prompt": "(masterpiece), best quality, highres, absurdres, 1other, amongus <lora:amongUsLORAV1_v10:0.8>",
+#             "steps": 20
+#         }
+#     await sd_request(interaction, payload, "txt2img")
 
 
 
