@@ -49,7 +49,6 @@ class MyClient(discord.Client):
         print(
             f'{message.author.name} [{message.author.id}] sent: {message.content} on Channel: {message.channel.id}')
 
-
 async def updateStatus():
     global streamers
     with open('status.json') as fs:

@@ -30,8 +30,9 @@ async def extract_footer(input_dict):
     footer = input_dict["footer"]["text"]
     footer_values = {}
     for item in footer.split(" • "):
-        key, value = item.split(":")
-        footer_values[key.strip()] = float(value.strip())
+        if ":" in item:
+            key, value = item.split(":")
+            footer_values[key.strip()] = float(value.strip())
     return footer_values
 
 async def extract_prompt(input_dict):
