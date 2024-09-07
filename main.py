@@ -110,7 +110,5 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
     # Add the command to the queue
     await sd_request(interaction, img_request, defer=True)
 
-
-
 # Get the TOKEN variable from the environment
 client.run(TOKEN)

@@ -1,5 +1,6 @@
 # This python file takes in user values and sends them to the stable diffusion api. Then returns the resulting base64. 
 import os
+import time
 import requests
 import base64
 import discord
@@ -26,18 +27,19 @@ async def txt2img(img_request=None):
     if img_request == None:
         img_request = ImageRequest()
         
-    
-        
     # Send the API request
     print("Sending API Request")
+    start_time = time.time()
     response = requests.post(URL, headers=headers, data=img_request.get_payload())
+    end_time = time.time()
+    img_request.set_generation_time((end_time - start_time))
 
-    return response
+    return response, img_request
 
 
 async def process_request(interaction, img_request: ImageRequest, defer=True):
     if img_request.request_type == RequestTypes.TXT2IMG:
-        response = await txt2img(img_request)
+        response, img_request = await txt2img(img_request)
         if response.status_code != 200:
             await interaction.followup.send(f"Error! AI Artist Failed to Respond!")
             return

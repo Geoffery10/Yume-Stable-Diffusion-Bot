@@ -1,5 +1,6 @@
 import json
 from random import randint
+import time
 from models.RequestTypes import RequestTypes
 
 class ImageRequest:
@@ -28,6 +29,7 @@ class ImageRequest:
         self.save_images = True
         self.disable_extra_networks = False
         self.request_type = RequestTypes.TXT2IMG
+        self.generation_time = None
 
     def set_prompt(self, prompt: str):
         prompt = self.easy_positive(prompt)
@@ -75,6 +77,8 @@ class ImageRequest:
     def set_request_type(self, type: RequestTypes):
         self.request_type = type
         
+    def set_generation_time(self, time: time):
+        self.generation_time = time
         
     def get_payload(self) -> str:
         data = {

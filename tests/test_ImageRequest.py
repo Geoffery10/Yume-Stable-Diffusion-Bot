@@ -2,6 +2,7 @@ import json
 import unittest
 from models.ImageRequest import ImageRequest
 from models.RequestTypes import RequestTypes
+import time
 
 class TestImageRequest(unittest.TestCase):
     def setUp(self):
@@ -33,6 +34,7 @@ class TestImageRequest(unittest.TestCase):
         self.assertEqual(image_request.send_images, True)
         self.assertEqual(image_request.save_images, True)
         self.assertEqual(image_request.request_type, RequestTypes.TXT2IMG)
+        self.assertEqual(image_request.generation_time, None)
 
 
     def test_set_prompt(self):
@@ -72,6 +74,11 @@ class TestImageRequest(unittest.TestCase):
         new_width = 512
         self.image_request.set_width(new_width)
         self.assertEqual(self.image_request.width, new_width)
+        
+    def test_set_width(self):
+        new_generation_time = time.time()
+        self.image_request.set_generation_time(new_generation_time)
+        self.assertEqual(self.image_request.generation_time, new_generation_time)
 
     def test_dimension_clamp(self):
         for width in [-1, 0, 1, 512, 1025]:
