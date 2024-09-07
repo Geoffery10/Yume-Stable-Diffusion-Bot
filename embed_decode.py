@@ -1,7 +1,6 @@
 # This python code decodes discord sd_embeds and returns them as a payload for the stable diffusion api.
 
 from random import randint
-from prompt_parser import parse_ez_negative
 from models.ImageRequest import ImageRequest
 
 
@@ -10,10 +9,6 @@ async def decode(input_dict):
 
     # parse description
     prompt, negative_prompt = await extract_prompt(input_dict)
-
-    # parse ez negative
-    if "easy_negative" in prompt:
-        prompt = parse_ez_negative(prompt)
 
     # generate new seed
     footer_values["seed"] = randint(0, 2 ** 32 - 1)

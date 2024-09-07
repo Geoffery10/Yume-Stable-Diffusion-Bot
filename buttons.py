@@ -1,7 +1,5 @@
-import random
 import discord
 from discord import ui
-from random import randint
 from embed_decode import decode
 from sd_requests import sd_request
 from models.ImageRequest import ImageRequest
@@ -9,7 +7,7 @@ from models.RequestTypes import RequestTypes
 
 class TryAgain(discord.ui.Button):
     def __init__(self):
-        super().__init__(style=discord.ButtonStyle.green, label="Try again")
+        super().__init__(style=discord.ButtonStyle.green, label="🔁 Try again")
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -41,7 +39,7 @@ class TryAgain(discord.ui.Button):
 
 class DeleteButton(discord.ui.Button):
     def __init__(self):
-        super().__init__(style=discord.ButtonStyle.danger, label="Delete")
+        super().__init__(style=discord.ButtonStyle.danger, label="🗑️ Delete")
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -73,7 +71,7 @@ class DeleteButton(discord.ui.Button):
 
 class UpscaleButton(discord.ui.Button):
     def __init__(self):
-        super().__init__(style=discord.ButtonStyle.blurple, label="Upscale")
+        super().__init__(style=discord.ButtonStyle.blurple, label="⬆️ Upscale", disabled=True)
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.send_message("Soon this will upscale the image.", ephemeral=True)
@@ -85,7 +83,7 @@ class UpscaleButton(discord.ui.Button):
 
 class EditButton(discord.ui.Button):
     def __init__(self):
-        super().__init__(style=discord.ButtonStyle.secondary, label="Edit")
+        super().__init__(style=discord.ButtonStyle.secondary, label="✏️ Edit")
 
     async def callback(self, interaction: discord.Interaction):
         # Get the embed from the original message
