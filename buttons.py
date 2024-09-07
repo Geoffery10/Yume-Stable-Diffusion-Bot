@@ -23,13 +23,14 @@ class TryAgain(discord.ui.Button):
         print(embed)
 
         # Parse the embed
-        payload = await decode(embed)
+        img_request = await decode(embed)
         print('Payload: ')
-        print(payload)
+        print(img_request.get_payload())
+        img_request.set_discord_interaction(interaction)
 
         
         # Send request to stable diffusion
-        await sd_request(interaction, payload, 'txt2img')
+        await sd_request(interaction, img_request, 'txt2img')
         # Respond to the interaction with nothing incase it fails
         try:
             await interaction.response.send_message("")
