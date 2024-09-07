@@ -6,7 +6,7 @@ import discord
 class ImageRequest:
     def __init__(self):
         self.prompt = "warning sign"
-        self.negative_prompt = ""
+        self.negative_prompt = "fewer digits, extra digits"
         self.seed = -1
         self.enable_hr = False
         self.hr_scale = 2
@@ -39,6 +39,7 @@ class ImageRequest:
             self.prompt = prompt
             
     def set_negative_prompt(self, negative_prompt: str):
+        negative_prompt = self.easy_negative(negative_prompt)
         self.negative_prompt = negative_prompt
     
     def set_width(self, width: int):
@@ -67,7 +68,7 @@ class ImageRequest:
         else:
             self.seed = seed
             
-    def set_nsfw(self):
+    def set_not_nsfw(self):
         if not "rating_safe" in self.prompt:
             self.prompt = "rating_safe, " + self.prompt
         if not "rating_explicit" in self.negative_prompt:
@@ -112,3 +113,8 @@ class ImageRequest:
             return "score_9, score_8_up, score_7_up, " + prompt
         else:
             return prompt
+        
+    def easy_negative(self, negative_prompt):
+        if not "fewer digits, extra digits" in negative_prompt:
+            return "fewer digits, extra digits, " + negative_prompt
+        return negative_prompt

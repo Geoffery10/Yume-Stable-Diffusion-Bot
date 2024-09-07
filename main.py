@@ -103,8 +103,8 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
     img_request.set_width(width)
     img_request.set_height(height)
     
-    if interaction.channel.is_nsfw():
-        img_request.set_nsfw()
+    if not interaction.channel.is_nsfw():
+        img_request.set_not_nsfw()
 
     
     # Add the command to the queue

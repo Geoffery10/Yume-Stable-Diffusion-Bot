@@ -9,8 +9,6 @@ from dotenv import load_dotenv
 from datetime import datetime
 import json
 from file_management import store_image, parseImage
-from loggingChannel import sendLog
-from prompt_parser import ez_negative_long, parse_ez_negative
 from models.ImageRequest import ImageRequest
 
 
