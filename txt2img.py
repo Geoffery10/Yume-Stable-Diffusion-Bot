@@ -57,9 +57,9 @@ async def process_request(interaction, img_request: ImageRequest, defer=True):
     info = json.loads(response.json()['info'])
     print(info)
 
-    description = f"prompt: {info['prompt']}"
+    description = f"**prompt**: {info['prompt']}"
     if info['negative_prompt'] != "":
-        description += f"\nnegative: {info['negative_prompt']}"
+        description += f"\n**negative**: {info['negative_prompt']}"
     embed = discord.Embed(color=6301830,
                             description=description, timestamp=now)
     embed.set_author(

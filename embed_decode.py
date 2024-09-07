@@ -40,11 +40,11 @@ async def extract_footer(input_dict):
     return footer_values
 
 async def extract_prompt(input_dict):
-    prompt_start = input_dict['description'].find("prompt:") + len("prompt:")
-    prompt_end = input_dict['description'].find("negative:")
+    prompt_start = input_dict['description'].find("**prompt**:") + len("**prompt**:")
+    prompt_end = input_dict['description'].find("**negative**:")
     prompt = input_dict['description'][prompt_start:prompt_end].strip()
 
     neg_prompt_start = input_dict['description'].find(
-        "negative:") + len("negative:")
+        "**negative**:") + len("**negative**:")
     negative_prompt = input_dict['description'][neg_prompt_start:].strip()
     return prompt,negative_prompt
