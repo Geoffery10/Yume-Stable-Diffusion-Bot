@@ -17,7 +17,7 @@ class ImageRequest:
         self.styles = []
         self.batch_size = 1
         self.steps = 20
-        self.cfg_scale = 7
+        self.cfg = 7
         self.width = 816
         self.height = 1024
         self.restore_faces = False
