@@ -5,7 +5,7 @@ from random import randint
 from embed_decode import decode
 from sd_requests import sd_request
 from models.ImageRequest import ImageRequest
-
+from models.RequestTypes import RequestTypes
 
 class TryAgain(discord.ui.Button):
     def __init__(self):
@@ -25,13 +25,13 @@ class TryAgain(discord.ui.Button):
 
         # Parse the embed
         img_request = await decode(embed)
+        img_request.set_request_type(RequestTypes.TXT2IMG)
         print('Payload: ')
         print(img_request.get_payload())
-        img_request.set_discord_interaction(interaction)
 
         
         # Send request to stable diffusion
-        await sd_request(interaction, img_request, 'txt2img')
+        await sd_request(interaction, img_request)
         # Respond to the interaction with nothing incase it fails
         try:
             await interaction.response.send_message("")
@@ -102,7 +102,6 @@ class EditButton(discord.ui.Button):
         img_request = await decode(embed)
         print('Payload: ')
         print(img_request.get_payload())
-        img_request.set_discord_interaction(interaction)
 
         # Open a modal to edit the prompt
         # Pass the payload to the EditModal constructor
@@ -171,8 +170,8 @@ class EditModal(ui.Modal, title='Edit Prompt'):
         img_request.set_steps(int(self.steps.value))
         img_request.set_width(int(self.width.value))
         img_request.set_height(int(self.height.value))
+        img_request.set_request_type(RequestTypes.TXT2IMG)
         
-        img_request.set_discord_interaction(interaction)
         # Acknowledge the interaction
         try:
             await interaction.response.defer()
@@ -180,7 +179,7 @@ class EditModal(ui.Modal, title='Edit Prompt'):
             pass
 
         # Send the request to stable diffusion
-        await sd_request(interaction, img_request, 'txt2img', defer=True)
+        await sd_request(interaction, img_request, defer=True)
 
     async def on_error(self, interaction: discord.Interaction, error):
         await interaction.response.send_message(f'An error occurred: {error}', ephemeral=True)

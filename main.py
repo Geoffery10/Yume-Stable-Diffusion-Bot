@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from loggingChannel import sendLog
 import os
 from models.ImageRequest import ImageRequest
+from models.RequestTypes import RequestTypes
 from styles import styles
 from sd_requests import sd_request
 
@@ -86,8 +87,6 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
     # Dream
     print(await sendLog(log=f'{interaction.user.name} dreaming of {prompt}', client=client))
     img_request = ImageRequest()
-    
-    img_request.set_discord_interaction(interaction)
 
     # Acknowledge the interaction
     try:
@@ -102,13 +101,14 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
     img_request.set_cfg(cfg_scale)
     img_request.set_width(width)
     img_request.set_height(height)
+    img_request.set_request_type(RequestTypes.TXT2IMG)
     
     if not interaction.channel.is_nsfw():
         img_request.set_not_nsfw()
 
     
     # Add the command to the queue
-    await sd_request(interaction, img_request, "txt2img", defer=True)
+    await sd_request(interaction, img_request, defer=True)
 
 
 

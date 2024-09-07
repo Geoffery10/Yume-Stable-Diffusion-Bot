@@ -10,6 +10,7 @@ from datetime import datetime
 import json
 from file_management import store_image, parseImage
 from models.ImageRequest import ImageRequest
+from models.RequestTypes import RequestTypes
 
 
 async def txt2img(img_request=None):
@@ -34,17 +35,17 @@ async def txt2img(img_request=None):
     return response
 
 
-async def process_request(interaction, img_request: ImageRequest, type, defer=True):
-    if 'txt2img' in type:
+async def process_request(interaction, img_request: ImageRequest, defer=True):
+    if img_request.request_type == RequestTypes.TXT2IMG:
         response = await txt2img(img_request)
         if response.status_code != 200:
-            await img_request.discord_interaction.followup.send(f"Error! AI Artist Failed to Respond!")
+            await interaction.followup.send(f"Error! AI Artist Failed to Respond!")
             return
         # Send Image
         image = await parseImage(response)
         file = discord.File(BytesIO(image), filename="temp.png")
 
-    elif 'img2img' in type:
+    elif img_request.request_type == RequestTypes.IMG2IMG:
         # file = await img2img(payload=payload)
         # await interaction.followup.send(file=file)
         await interaction.followup.send('img2img is not yet implemented')
