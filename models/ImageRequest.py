@@ -1,7 +1,5 @@
 import json
-
-import discord
-
+from models.RequestTypes import RequestTypes
 
 class ImageRequest:
     def __init__(self):
@@ -27,15 +25,14 @@ class ImageRequest:
         self.comments = {}
         self.send_images = True
         self.save_images = True
-        
-        # Discord
-        self.discord_interaction = None
+        self.disable_extra_networks = False
+        self.request_type = RequestTypes.TXT2IMG
 
     def set_prompt(self, prompt: str):
         prompt = self.easy_positive(prompt)
         if prompt == "":
             self.prompt = "warning sign"
-        else: 
+        else:
             self.prompt = prompt
             
     def set_negative_prompt(self, negative_prompt: str):
@@ -74,8 +71,8 @@ class ImageRequest:
         if not "rating_explicit" in self.negative_prompt:
             self.negative_prompt = "rating_explicit, " + self.negative_prompt
             
-    def set_discord_interaction(self, interaction: discord.Interaction):
-        self.discord_interaction = interaction
+    def set_request_type(self, type: RequestTypes):
+        self.request_type = type
         
         
     def get_payload(self) -> str:
@@ -95,7 +92,8 @@ class ImageRequest:
             'enable_hr': self.enable_hr,
             'sampler_index': self.sampler_index,
             'send_images': self.send_images,
-            'save_images': self.save_images
+            'save_images': self.save_images,
+            'disable_extra_networks': self.disable_extra_networks
         }
         return json.dumps(data)
         
