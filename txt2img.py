@@ -6,9 +6,9 @@ import discord
 from PIL import Image
 from io import BytesIO
 from dotenv import load_dotenv
-from datetime import datetime
 import json
 from file_management import store_image, parseImage
+from models.EmbedBuilder import EmbedBuilder
 from models.ImageRequest import ImageRequest
 from models.RequestTypes import RequestTypes
 
@@ -52,28 +52,16 @@ async def process_request(interaction, img_request: ImageRequest, defer=True):
         return None
 
     # Create embed
-    # Get current time
-    now = datetime.now()
     info = json.loads(response.json()['info'])
     print(info)
 
-    description = f"**prompt**: {info['prompt']}"
-    if info['negative_prompt'] != "":
-        description += f"\n**negative**: {info['negative_prompt']}"
-    embed = discord.Embed(color=6301830,
-                            description=description, timestamp=now)
-    embed.set_author(
-        name=interaction.user.nick, icon_url=interaction.user.avatar, url="")
-    embed.set_footer(
-        text=f"seed:{info['seed']} • width:{info['width']} • height:{info['height']} • steps:{info['steps']} • cfg_scale:{info['cfg_scale']}")
-    # Attach file to embed
-    embed.set_image(url="attachment://temp.png")
+    embed = EmbedBuilder(img_request, interaction)
 
     # Send embed
     if defer:
-        await interaction.followup.send(embed=embed, file=file, view=txt2img_Buttons())
+        await interaction.followup.send(embed=embed.get_embed(), file=file, view=txt2img_Buttons())
     else:
-        await interaction.channel.send(embed=embed, file=file, view=txt2img_Buttons())
+        await interaction.channel.send(embed=embed.get_embed(), file=file, view=txt2img_Buttons())
 
     await store_image(response)
 

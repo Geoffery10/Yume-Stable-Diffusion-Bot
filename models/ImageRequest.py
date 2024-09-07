@@ -1,4 +1,5 @@
 import json
+from random import randint
 from models.RequestTypes import RequestTypes
 
 class ImageRequest:
@@ -15,7 +16,7 @@ class ImageRequest:
         self.styles = []
         self.batch_size = 1
         self.steps = 20
-        self.cfg = 7
+        self.cfg_scale = 7
         self.width = 816
         self.height = 1024
         self.restore_faces = False
@@ -53,15 +54,15 @@ class ImageRequest:
         else:
             self.steps = steps
             
-    def set_cfg(self, cfg: float):
-        if cfg < 1:
-            self.cfg = 7
+    def set_cfg_scale(self, cfg_scale: float):
+        if cfg_scale < 1:
+            self.cfg_scale = 7
         else:
-            self.cfg = cfg
+            self.cfg_scale = cfg_scale
             
     def set_seed(self, seed: int):
-        if seed < 1: 
-            self.seed = -1
+        if seed < 1 or seed == -1: 
+            self.seed = randint(1, 10000000000)
         else:
             self.seed = seed
             
@@ -82,7 +83,7 @@ class ImageRequest:
             'seed': self.seed,
             'batch_size': self.batch_size,
             'steps': self.steps,
-            'cfg_scale': self.cfg,
+            'cfg_scale': self.cfg_scale,
             'width': self.width,
             'height': self.height,
             'restore_faces': self.restore_faces,

@@ -22,7 +22,7 @@ class TestImageRequest(unittest.TestCase):
         self.assertEqual(image_request.styles, [])
         self.assertEqual(image_request.batch_size, 1)
         self.assertEqual(image_request.steps, 20)
-        self.assertEqual(image_request.cfg, 7)
+        self.assertEqual(image_request.cfg_scale, 7)
         self.assertEqual(image_request.width, 816)
         self.assertEqual(image_request.height, 1024)
         self.assertEqual(image_request.restore_faces, False)

@@ -98,7 +98,7 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
     img_request.set_negative_prompt(negative)
     img_request.set_steps(steps)
     img_request.set_seed(seed)
-    img_request.set_cfg(cfg_scale)
+    img_request.set_cfg_scale(cfg_scale)
     img_request.set_width(width)
     img_request.set_height(height)
     img_request.set_request_type(RequestTypes.TXT2IMG)

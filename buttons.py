@@ -171,6 +171,7 @@ class EditModal(ui.Modal, title='Edit Prompt'):
         img_request.set_width(int(self.width.value))
         img_request.set_height(int(self.height.value))
         img_request.set_request_type(RequestTypes.TXT2IMG)
+        img_request.set_seed(-1)
         
         # Acknowledge the interaction
         try:
