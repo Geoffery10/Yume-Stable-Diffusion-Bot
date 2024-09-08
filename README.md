@@ -1,13 +1,13 @@
 <p align="center">
-<img align="center" width="200" height="200" src="./img/yume-2024-08-28.png">
+<img align="center" style="width:200px; height:200px; border-radius:50%; display:block;" width="200" height="200" src="./img/yume-2024-08-28.png">
 </p>
 
 
 # Yume Stable Diffusion Bot
 A Discord Bot that interfaces with the [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui) api to generate AI images. 
 
-### Warning this bot is still under constuction 
-<img align="center" width="200" height="200" src="https://user-images.githubusercontent.com/43981091/222808107-89a57928-82b6-4e81-ba0e-53cc263b73bf.png">
+### Warning this bot is still under construction and mostly custom built for my server
+<img align="center" style="width:400px;" src="https://i.postimg.cc/9QzvxWxX/warning.png">
 
 ## Table of Contents
 * [Preview](#preview)
@@ -16,7 +16,7 @@ A Discord Bot that interfaces with the [AUTOMATIC1111/stable-diffusion-webui](ht
 * [License](#license)
 
 ### Preview
-![image](https://user-images.githubusercontent.com/43981091/222803452-eca9d77f-9c0d-44a5-be2a-4f3c24af0b3c.png)
+![image](https://i.postimg.cc/1zdRWC02/image.png)
 
 ## Commands
 * \dream - The main txt2img command
