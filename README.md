@@ -7,7 +7,7 @@
 A Discord Bot that interfaces with the [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui) api to generate AI images. 
 
 ### Warning this bot is still under construction and mostly custom built for my server
-<img align="center" style="width:400px;" src="https://i.postimg.cc/9QzvxWxX/warning.png">
+<img align="center" style="width:400px;" src="./img/warning.png">
 
 ## Table of Contents
 * [Preview](#preview)
