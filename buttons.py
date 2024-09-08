@@ -1,9 +1,10 @@
 import discord
 from discord import ui
 from embed_decode import decode
-from sd_requests import sd_request
 from models.ImageRequest import ImageRequest
 from models.RequestTypes import RequestTypes
+import txt2img
+
 
 class TryAgain(discord.ui.Button):
     def __init__(self):
@@ -27,9 +28,8 @@ class TryAgain(discord.ui.Button):
         print('Payload: ')
         print(img_request.get_payload())
 
-        
         # Send request to stable diffusion
-        await sd_request(interaction, img_request)
+        await txt2img.process_request(interaction=interaction, img_request=img_request, defer=True)
         # Respond to the interaction with nothing incase it fails
         try:
             await interaction.response.send_message("")
@@ -55,14 +55,15 @@ class DeleteButton(discord.ui.Button):
             embed.set_image(url="")
 
             # add a new field to the embed saying that the image has been deleted
-            embed.add_field(name="Image deleted", value="This image has been deleted. Restoring is not yet possible.")
+            embed.add_field(
+                name="Image deleted", value="This image has been deleted. Restoring is not yet possible.")
 
             # Send the embed
             await interaction.followup.send(embed=embed)
         except Exception as e:
             print(e)
             await interaction.followup.send("Something went wrong while deleting the image. Please try again later.", ephemeral=True)
-        
+
         try:
             await interaction.response.send_message("")
         except:
@@ -122,7 +123,6 @@ class EditModal(ui.Modal, title='Edit Prompt'):
         self.width.default = str(int(img_request.width))
         self.height.default = str(int(img_request.height))
 
-
     prompt = ui.TextInput(label='Prompt',
                           style=discord.TextStyle.paragraph,
                           placeholder='Enter your prompt here',
@@ -130,38 +130,36 @@ class EditModal(ui.Modal, title='Edit Prompt'):
                           max_length=2000,
                           required=True)
     negative_prompt = ui.TextInput(label='Negative Prompt',
-                                    style=discord.TextStyle.paragraph,
-                                    placeholder='Enter your negative prompt here',
-                                    min_length=0,
-                                    max_length=2000,
-                                    required=False)
-    # Steps integer input 
+                                   style=discord.TextStyle.paragraph,
+                                   placeholder='Enter your negative prompt here',
+                                   min_length=0,
+                                   max_length=2000,
+                                   required=False)
+    # Steps integer input
     steps = ui.TextInput(label='Steps',
                          style=discord.TextStyle.short,
-                            placeholder='Enter the number of steps',
-                            min_length=1,
-                            max_length=2,
-                            required=True)
+                         placeholder='Enter the number of steps',
+                         min_length=1,
+                         max_length=2,
+                         required=True)
     # width integer input
     width = ui.TextInput(label='Width',
-                            style=discord.TextStyle.short,
-                            placeholder='Enter the width of the image',
-                            min_length=1,
-                            max_length=4,
-                            required=True)
+                         style=discord.TextStyle.short,
+                         placeholder='Enter the width of the image',
+                         min_length=1,
+                         max_length=4,
+                         required=True)
     # height integer input
     height = ui.TextInput(label='Height',
-                            style=discord.TextStyle.short,
-                            placeholder='Enter the height of the image',
-                            min_length=1,
-                            max_length=4,
-                            required=True)
-    
-
+                          style=discord.TextStyle.short,
+                          placeholder='Enter the height of the image',
+                          min_length=1,
+                          max_length=4,
+                          required=True)
 
     async def on_submit(self, interaction: discord.Interaction):
         # Get the values from the text inputs
-        
+
         img_request = ImageRequest()
         img_request.set_prompt(str(self.prompt.value))
         img_request.set_negative_prompt(str(self.negative_prompt.value))
@@ -170,7 +168,7 @@ class EditModal(ui.Modal, title='Edit Prompt'):
         img_request.set_height(int(self.height.value))
         img_request.set_request_type(RequestTypes.TXT2IMG)
         img_request.set_seed(-1)
-        
+
         # Acknowledge the interaction
         try:
             await interaction.response.defer()
@@ -178,7 +176,7 @@ class EditModal(ui.Modal, title='Edit Prompt'):
             pass
 
         # Send the request to stable diffusion
-        await sd_request(interaction, img_request, defer=True)
+        await txt2img.process_request(interaction=interaction, img_request=img_request, defer=True)
 
     async def on_error(self, interaction: discord.Interaction, error):
         await interaction.response.send_message(f'An error occurred: {error}', ephemeral=True)
