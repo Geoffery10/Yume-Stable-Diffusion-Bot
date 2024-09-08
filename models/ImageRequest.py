@@ -6,14 +6,14 @@ from models.RequestTypes import RequestTypes
 
 class ImageRequest:
     def __init__(self, prompt: str = "warning sign",
-                 negative_prompt: str = "fewer digits, extra digits",
+                 negative_prompt: str = "fewer digits, extra digits, score_6, score_5, score_4",
                  width: int = 816,
                  height: int = 1024,
                  seed: int = -1,
                  steps: int = 20,
                  cfg_scale: float = 7):
         self.good_qualities = "score_9, score_8_up, score_7_up"
-        self.bad_qualities = "fewer digits, extra digits"
+        self.bad_qualities = "fewer digits, extra digits, score_6, score_5, score_4"
         self.sfw_prompt = "rating_safe"
         self.sfw_negative = "rating_explicit"
 
