@@ -49,6 +49,7 @@ class MyClient(discord.Client):
         print(
             f'{message.author.name} [{message.author.id}] sent: {message.content} on Channel: {message.channel.id}')
 
+
 async def updateStatus():
     global streamers
     with open('status.json') as fs:
@@ -81,17 +82,17 @@ myid = '<@1043957906921492562>'
 # This should have most of the payload options
 # ================================== #
 @tree.command(description="Dream of an Image")
-async def dream(interaction: discord.Interaction, prompt: str, negative: str = "", steps: int = 20, 
-                seed: int = -1, cfg_scale: int = 7, width: int = 816, height: int = 1024):
+async def dream(interaction: discord.Interaction, prompt: str, negative: str = "", steps: int = 20,
+                seed: int = -1, cfg_scale: int = 7, width: int = 816, height: int = 1024, is_anime: bool = False):
     # Dream
     print(await sendLog(log=f'{interaction.user.name} dreaming of {prompt}', client=client))
-    img_request = ImageRequest()
+    img_request = ImageRequest(is_anime=is_anime)
 
     # Acknowledge the interaction
     try:
         await interaction.response.defer()
     except Exception as e:
-        print(await sendLog(log=e))        
+        print(await sendLog(log=e))
 
     img_request.set_prompt(prompt)
     img_request.set_negative_prompt(negative)
@@ -101,11 +102,10 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
     img_request.set_width(width)
     img_request.set_height(height)
     img_request.set_request_type(RequestTypes.TXT2IMG)
-    
+
     if not interaction.channel.is_nsfw():
         img_request.set_not_nsfw()
 
-    
     # Add the command to the queue
     await sd_request(interaction, img_request, defer=True)
 

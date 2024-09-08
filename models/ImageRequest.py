@@ -6,16 +6,20 @@ from models.RequestTypes import RequestTypes
 
 class ImageRequest:
     def __init__(self, prompt: str = "warning sign",
-                 negative_prompt: str = "fewer digits, extra digits, score_6, score_5, score_4",
+                 negative_prompt: str = "",
                  width: int = 816,
                  height: int = 1024,
                  seed: int = -1,
                  steps: int = 20,
-                 cfg_scale: float = 7):
+                 cfg_scale: float = 7,
+                 is_anime: bool = False):
         self.good_qualities = "score_9, score_8_up, score_7_up"
-        self.bad_qualities = "fewer digits, extra digits, score_6, score_5, score_4"
+        self.bad_qualities = "fewer digits, extra digits, score_6, score_5, score_4, watermark"
         self.sfw_prompt = "rating_safe"
         self.sfw_negative = "rating_explicit"
+        self.is_anime = is_anime
+        self.anime_prompt = "source_anime"
+        self.anime_negative = "source_pony, source_furry, source_cartoon"
 
         self.set_prompt(prompt)
         self.set_negative_prompt(negative_prompt)
@@ -44,15 +48,18 @@ class ImageRequest:
         self.generation_time = None
 
     def set_prompt(self, prompt: str):
-        prompt = self.easy_positive(prompt)
         if prompt == "":
             self.prompt = "warning sign"
         else:
             self.prompt = prompt
+        self.prompt = self.easy_positive(self.prompt)
+        if self.is_anime:
+            self.set_anime_prompt()
 
     def set_negative_prompt(self, negative_prompt: str):
-        negative_prompt = self.easy_negative(negative_prompt)
-        self.negative_prompt = negative_prompt
+        self.negative_prompt = self.easy_negative(negative_prompt)
+        if self.is_anime:
+            self.set_anime_negative()
 
     def set_width(self, width: int):
         self.width = self.dimension_clamp(width)
@@ -89,6 +96,9 @@ class ImageRequest:
 
     def set_request_type(self, type: RequestTypes):
         self.request_type = type
+
+    def set_is_anime(self, is_anime: bool):
+        self.is_anime = is_anime
 
     def set_generation_time(self, time: time):
         self.generation_time = time
@@ -134,11 +144,23 @@ class ImageRequest:
             return f"{self.bad_qualities}, " + negative_prompt
         return negative_prompt
 
+    def set_anime_prompt(self):
+        if not self.anime_prompt in self.prompt:
+            self.prompt = f"{self.anime_prompt}, " + self.prompt
+
+    def set_anime_negative(self):
+        if not self.anime_negative in self.negative_prompt:
+            self.negative_prompt = f"{self.anime_negative}, " + \
+                self.negative_prompt
+
     def get_prompt_without_qualities(self):
         cleaned_prompt = self.prompt
         if self.good_qualities in self.prompt:
             cleaned_prompt = cleaned_prompt.replace(
                 f"{self.good_qualities}, ", "")
+        if self.anime_prompt in self.prompt:
+            cleaned_prompt = cleaned_prompt.replace(
+                f"{self.anime_prompt}, ", "")
 
         return cleaned_prompt
 
@@ -147,5 +169,8 @@ class ImageRequest:
         if self.bad_qualities in self.negative_prompt:
             cleaned_prompt = cleaned_prompt.replace(
                 f"{self.bad_qualities}, ", "")
+        if self.anime_negative in self.negative_prompt:
+            cleaned_prompt = cleaned_prompt.replace(
+                f"{self.anime_negative}, ", "")
 
         return cleaned_prompt

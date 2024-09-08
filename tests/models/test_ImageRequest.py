@@ -15,7 +15,7 @@ class TestImageRequest(unittest.TestCase):
         self.assertEqual(
             image_request.prompt, "score_9, score_8_up, score_7_up, warning sign")
         self.assertEqual(image_request.negative_prompt,
-                         "fewer digits, extra digits, score_6, score_5, score_4")
+                         "fewer digits, extra digits, score_6, score_5, score_4, watermark, ")
         self.assertGreater(image_request.seed, 0)
         self.assertEqual(image_request.enable_hr, False)
         self.assertEqual(image_request.hr_scale, 2)
@@ -92,14 +92,14 @@ class TestImageRequest(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_easy_negative_does_NOT_add_if_already_there(self):
-        original_negative_prompt = "original negative prompt with fewer digits, extra digits, score_6, score_5, score_4, 1boy"
+        original_negative_prompt = f"original negative prompt with {self.image_request.bad_qualities} 1boy"
         expected_result = original_negative_prompt
         result = self.image_request.easy_negative(original_negative_prompt)
         self.assertEqual(result, expected_result)
 
     def test_easy_negative_adds_string_if_missing(self):
         original_negative_prompt = "original negative prompt without negative"
-        expected_result = "fewer digits, extra digits, score_6, score_5, score_4, original negative prompt without negative"
+        expected_result = f"{self.image_request.bad_qualities}, original negative prompt without negative"
         result = self.image_request.easy_negative(original_negative_prompt)
         self.assertEqual(result, expected_result)
 
