@@ -37,59 +37,26 @@ class TestImageRequest(unittest.TestCase):
         self.assertEqual(image_request.generation_time, None)
 
 
-    def test_set_prompt(self):
-        # Test that setting a prompt updates the `prompt` attribute
+    def test_sets_prompt(self):
         new_prompt = "new prompt"
         self.image_request.set_prompt(new_prompt)
         new_prompt = self.image_request.easy_positive(new_prompt)
         self.assertEqual(self.image_request.prompt, new_prompt)
-
-    def test_easy_positive(self):
-        # Test that `easy_positive` returns the input unchanged if it already contains the required string
-        original_prompt = "score_9, score_8_up, score_7_up, 1girl, solo"
-        expected_result = original_prompt
-        result = self.image_request.easy_positive(original_prompt)
-        self.assertEqual(result, expected_result)
-
-    def test_easy_positive_adds_string(self):
-        # Test that `easy_positive` adds the required string to the input if it's missing
-        original_prompt = "original prompt without scores"
-        expected_result = "score_9, score_8_up, score_7_up, original prompt without scores"
-        result = self.image_request.easy_positive(original_prompt)
-        self.assertEqual(result, expected_result)
-
-    def test_easy_negative(self):
-        original_negative_prompt = "original negative prompt with fewer digits, extra digits, 1boy"
-        expected_result = original_negative_prompt
-        result = self.image_request.easy_negative(original_negative_prompt)
-        self.assertEqual(result, expected_result)
-
-    def test_easy_negative_adds_string(self):
-        original_negative_prompt = "original negative prompt without negative"
-        expected_result = "fewer digits, extra digits, original negative prompt without negative"
-        result = self.image_request.easy_negative(original_negative_prompt)
-        self.assertEqual(result, expected_result)
 
     def test_set_width(self):
         new_width = 512
         self.image_request.set_width(new_width)
         self.assertEqual(self.image_request.width, new_width)
         
-    def test_set_width(self):
+    def test_set_height(self):
+        new_height = 512
+        self.image_request.set_height(new_height)
+        self.assertEqual(self.image_request.height, new_height)
+        
+    def test_set_generation_time(self):
         new_generation_time = time.time()
         self.image_request.set_generation_time(new_generation_time)
         self.assertEqual(self.image_request.generation_time, new_generation_time)
-
-    def test_dimension_clamp(self):
-        for width in [-1, 0, 1, 512, 1025]:
-            clamped_width = self.image_request.dimension_clamp(width)
-            if width < 1:
-                expected_result = 512
-            elif width > 1024:
-                expected_result = 1024
-            else:
-                expected_result = width
-            self.assertEqual(clamped_width, expected_result)
 
     def test_get_payload(self):
         payload = self.image_request.get_payload()
@@ -97,6 +64,41 @@ class TestImageRequest(unittest.TestCase):
             json.loads(payload)
         except ValueError as e:
             self.fail(f"Invalid JSON: {e}")
+      
+    def test_dimension_clamp(self):
+        for width in [-1, 0, 1, 512, 1025, 10000]:
+            clamped_width = self.image_request.dimension_clamp(width)
+            if width < 1:
+                expected_result = 512
+            elif width > 1024:
+                expected_result = 1024
+            else:
+                expected_result = width
+            self.assertEqual(clamped_width, expected_result)  
+            
+    def test_easy_positive_does_NOT_add_if_already_there(self):
+        original_prompt = "score_9, score_8_up, score_7_up, 1girl, solo"
+        expected_result = original_prompt
+        result = self.image_request.easy_positive(original_prompt)
+        self.assertEqual(result, expected_result)
+
+    def test_easy_positive_adds_string_if_missing(self):
+        original_prompt = "original prompt without scores"
+        expected_result = "score_9, score_8_up, score_7_up, original prompt without scores"
+        result = self.image_request.easy_positive(original_prompt)
+        self.assertEqual(result, expected_result)
+
+    def test_easy_negative_does_NOT_add_if_already_there(self):
+        original_negative_prompt = "original negative prompt with fewer digits, extra digits, 1boy"
+        expected_result = original_negative_prompt
+        result = self.image_request.easy_negative(original_negative_prompt)
+        self.assertEqual(result, expected_result)
+
+    def test_easy_negative_adds_string_if_missing(self):
+        original_negative_prompt = "original negative prompt without negative"
+        expected_result = "fewer digits, extra digits, original negative prompt without negative"
+        result = self.image_request.easy_negative(original_negative_prompt)
+        self.assertEqual(result, expected_result)
 
 if __name__ == '__main__':
     unittest.main()
