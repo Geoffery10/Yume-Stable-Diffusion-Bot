@@ -1,4 +1,4 @@
-# This python file takes in user values and sends them to the stable diffusion api. Then returns the resulting base64. 
+# This python file takes in user values and sends them to the stable diffusion api. Then returns the resulting base64.
 import os
 import time
 import requests
@@ -23,14 +23,15 @@ async def txt2img(img_request=None):
         "accept": "application/json",
         "Content-Type": "application/json"
     }
-    
+
     if img_request == None:
         img_request = ImageRequest()
-        
+
     # Send the API request
     print("Sending API Request")
     start_time = time.time()
-    response = requests.post(URL, headers=headers, data=img_request.get_payload())
+    response = requests.post(URL, headers=headers,
+                             data=img_request.get_payload())
     end_time = time.time()
     img_request.set_generation_time((end_time - start_time))
 
@@ -65,8 +66,6 @@ async def process_request(interaction, img_request: ImageRequest, defer=True):
     else:
         await interaction.channel.send(embed=embed.get_embed(), file=file, view=txt2img_Buttons())
 
-    await store_image(response)
-
 
 class txt2img_Buttons(discord.ui.View):
     def __init__(self):
@@ -76,12 +75,12 @@ class txt2img_Buttons(discord.ui.View):
         self.add_item(buttons.EditButton())
         self.add_item(buttons.DeleteButton())
         self.add_item(buttons.UpscaleButton())
-        
 
 
 if __name__ == "__main__":
     print("Starting txt2img.py")
     import asyncio
+
     async def main():
         response = await txt2img()
 
@@ -97,5 +96,5 @@ if __name__ == "__main__":
             image.show()
         else:
             print(f'Error: response code {response.status_code}')
-        
+
     asyncio.run(main())
