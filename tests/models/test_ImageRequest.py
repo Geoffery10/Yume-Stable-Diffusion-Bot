@@ -4,6 +4,7 @@ from models.ImageRequest import ImageRequest
 from models.RequestTypes import RequestTypes
 import time
 
+
 class TestImageRequest(unittest.TestCase):
     def setUp(self):
         self.image_request = ImageRequest()
@@ -11,9 +12,11 @@ class TestImageRequest(unittest.TestCase):
     def test_init(self):
         image_request = ImageRequest()
 
-        self.assertEqual(image_request.prompt, "warning sign")
-        self.assertEqual(image_request.negative_prompt, "fewer digits, extra digits")
-        self.assertEqual(image_request.seed, -1)
+        self.assertEqual(
+            image_request.prompt, "score_9, score_8_up, score_7_up, warning sign")
+        self.assertEqual(image_request.negative_prompt,
+                         "fewer digits, extra digits")
+        self.assertGreater(image_request.seed, 0)
         self.assertEqual(image_request.enable_hr, False)
         self.assertEqual(image_request.hr_scale, 2)
         self.assertEqual(image_request.hr_upscaler, "")
@@ -36,7 +39,6 @@ class TestImageRequest(unittest.TestCase):
         self.assertEqual(image_request.request_type, RequestTypes.TXT2IMG)
         self.assertEqual(image_request.generation_time, None)
 
-
     def test_sets_prompt(self):
         new_prompt = "new prompt"
         self.image_request.set_prompt(new_prompt)
@@ -47,16 +49,17 @@ class TestImageRequest(unittest.TestCase):
         new_width = 512
         self.image_request.set_width(new_width)
         self.assertEqual(self.image_request.width, new_width)
-        
+
     def test_set_height(self):
         new_height = 512
         self.image_request.set_height(new_height)
         self.assertEqual(self.image_request.height, new_height)
-        
+
     def test_set_generation_time(self):
         new_generation_time = time.time()
         self.image_request.set_generation_time(new_generation_time)
-        self.assertEqual(self.image_request.generation_time, new_generation_time)
+        self.assertEqual(self.image_request.generation_time,
+                         new_generation_time)
 
     def test_get_payload(self):
         payload = self.image_request.get_payload()
@@ -64,7 +67,7 @@ class TestImageRequest(unittest.TestCase):
             json.loads(payload)
         except ValueError as e:
             self.fail(f"Invalid JSON: {e}")
-      
+
     def test_dimension_clamp(self):
         for width in [-1, 0, 1, 512, 1025, 10000]:
             clamped_width = self.image_request.dimension_clamp(width)
@@ -74,8 +77,8 @@ class TestImageRequest(unittest.TestCase):
                 expected_result = 1024
             else:
                 expected_result = width
-            self.assertEqual(clamped_width, expected_result)  
-            
+            self.assertEqual(clamped_width, expected_result)
+
     def test_easy_positive_does_NOT_add_if_already_there(self):
         original_prompt = "score_9, score_8_up, score_7_up, 1girl, solo"
         expected_result = original_prompt
@@ -99,6 +102,7 @@ class TestImageRequest(unittest.TestCase):
         expected_result = "fewer digits, extra digits, original negative prompt without negative"
         result = self.image_request.easy_negative(original_negative_prompt)
         self.assertEqual(result, expected_result)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -8,7 +8,7 @@ from PIL import Image
 from io import BytesIO
 from dotenv import load_dotenv
 import json
-from file_management import parseImage
+from modules.file_management import parseImage
 from models.EmbedBuilder import EmbedBuilder
 from models.ImageRequest import ImageRequest
 from models.RequestTypes import RequestTypes
