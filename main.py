@@ -1,14 +1,11 @@
-import io
 import json
 import discord
-from discord import ActionRow, app_commands
-from discord.app_commands import Choice
-from discord.ext import commands
-from discord import SelectMenu, SelectOption
+from discord import app_commands
 from dotenv import load_dotenv
 from loggingChannel import sendLog
 import os
-import asyncio
+from models.ImageRequest import ImageRequest
+from models.RequestTypes import RequestTypes
 from styles import styles
 from sd_requests import sd_request
 
@@ -52,7 +49,6 @@ class MyClient(discord.Client):
         print(
             f'{message.author.name} [{message.author.id}] sent: {message.content} on Channel: {message.channel.id}')
 
-
 async def updateStatus():
     global streamers
     with open('status.json') as fs:
@@ -85,63 +81,33 @@ myid = '<@1043957906921492562>'
 # This should have most of the payload options
 # ================================== #
 @tree.command(description="Dream of an Image")
-async def dream(interaction: discord.Interaction, prompt: str, negative: str = "", easy_negative: bool = True,
-                steps: int = 20, seed: int = -1, cfg_scale: int = 7, width: int = 512, height: int = 640):
+async def dream(interaction: discord.Interaction, prompt: str, negative: str = "", steps: int = 20, 
+                seed: int = -1, cfg_scale: int = 7, width: int = 816, height: int = 1024):
     # Dream
     print(await sendLog(log=f'{interaction.user.name} dreaming of {prompt}', client=client))
+    img_request = ImageRequest()
 
     # Acknowledge the interaction
-    await interaction.response.defer()
+    try:
+        await interaction.response.defer()
+    except Exception as e:
+        print(await sendLog(log=e))        
 
-    # Nerf dangerous commands
-    if steps > 50:
-        steps = 50
-    if width > 800:
-        width = 800
-    if height > 800:
-        height = 800
-    if width < 100:
-        width = 100
-    if height < 100:
-        height = 100
-    if steps < 1:
-        steps = 1
+    img_request.set_prompt(prompt)
+    img_request.set_negative_prompt(negative)
+    img_request.set_steps(steps)
+    img_request.set_seed(seed)
+    img_request.set_cfg_scale(cfg_scale)
+    img_request.set_width(width)
+    img_request.set_height(height)
+    img_request.set_request_type(RequestTypes.TXT2IMG)
+    
+    if not interaction.channel.is_nsfw():
+        img_request.set_not_nsfw()
 
-    if easy_negative:
-        if negative != "":
-            negative += ", "
-        negative += "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, artist name"
-
+    
     # Add the command to the queue
-    payload = {
-        "prompt": prompt,
-        "negative_prompt": negative,
-        "steps": steps,
-        "seed": seed,
-        "cfg_scale": cfg_scale,
-        "width": width,
-        "height": height
-    }
-
-    # Add the command to the queue
-    await sd_request(interaction, payload, "txt2img", defer=True)
-
-@tree.command(description="Send something sus")
-async def sus(interaction: discord.Interaction):
-    # Among Us
-    print(await sendLog(log=f'{interaction.user.name} Sus!', client=client))
-
-    # Acknowledge the interaction
-    await interaction.response.defer()
-
-    # Add the command to the queue
-    payload = {
-            "prompt": "(masterpiece), best quality, highres, absurdres, 1other, amongus <lora:amongUsLORAV1_v10:0.8>",
-            "steps": 20
-        }
-    await sd_request(interaction, payload, "txt2img")
-
-
+    await sd_request(interaction, img_request, defer=True)
 
 # Get the TOKEN variable from the environment
 client.run(TOKEN)

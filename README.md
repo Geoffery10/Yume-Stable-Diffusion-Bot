@@ -1,5 +1,5 @@
 <p align="center">
-<img align="center" width="200" height="200" src="https://user-images.githubusercontent.com/43981091/222807185-35707861-2d50-4d38-b1b8-80de61fe7c4a.png">
+<img align="center" width="200" height="200" src="./img/yume-2024-08-28.png">
 </p>
 
 
@@ -20,7 +20,6 @@ A Discord Bot that interfaces with the [AUTOMATIC1111/stable-diffusion-webui](ht
 
 ## Commands
 * \dream - The main txt2img command
-* \sus - Among Us txt2img preset
 
 # Requirements
 * Python 3.10

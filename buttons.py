@@ -1,14 +1,13 @@
-import random
 import discord
 from discord import ui
-from random import randint
 from embed_decode import decode
 from sd_requests import sd_request
-
+from models.ImageRequest import ImageRequest
+from models.RequestTypes import RequestTypes
 
 class TryAgain(discord.ui.Button):
     def __init__(self):
-        super().__init__(style=discord.ButtonStyle.green, label="Try again")
+        super().__init__(style=discord.ButtonStyle.green, label="🔁 Try again")
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -23,13 +22,14 @@ class TryAgain(discord.ui.Button):
         print(embed)
 
         # Parse the embed
-        payload = await decode(embed)
+        img_request = await decode(embed)
+        img_request.set_request_type(RequestTypes.TXT2IMG)
         print('Payload: ')
-        print(payload)
+        print(img_request.get_payload())
 
         
         # Send request to stable diffusion
-        await sd_request(interaction, payload, 'txt2img')
+        await sd_request(interaction, img_request)
         # Respond to the interaction with nothing incase it fails
         try:
             await interaction.response.send_message("")
@@ -39,7 +39,7 @@ class TryAgain(discord.ui.Button):
 
 class DeleteButton(discord.ui.Button):
     def __init__(self):
-        super().__init__(style=discord.ButtonStyle.danger, label="Delete")
+        super().__init__(style=discord.ButtonStyle.danger, label="🗑️ Delete")
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -71,7 +71,7 @@ class DeleteButton(discord.ui.Button):
 
 class UpscaleButton(discord.ui.Button):
     def __init__(self):
-        super().__init__(style=discord.ButtonStyle.blurple, label="Upscale")
+        super().__init__(style=discord.ButtonStyle.blurple, label="⬆️ Upscale", disabled=True)
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.send_message("Soon this will upscale the image.", ephemeral=True)
@@ -83,7 +83,7 @@ class UpscaleButton(discord.ui.Button):
 
 class EditButton(discord.ui.Button):
     def __init__(self):
-        super().__init__(style=discord.ButtonStyle.secondary, label="Edit")
+        super().__init__(style=discord.ButtonStyle.secondary, label="✏️ Edit")
 
     async def callback(self, interaction: discord.Interaction):
         # Get the embed from the original message
@@ -97,13 +97,13 @@ class EditButton(discord.ui.Button):
         print(embed)
 
         # Parse the embed
-        payload = await decode(embed)
+        img_request = await decode(embed)
         print('Payload: ')
-        print(payload)
+        print(img_request.get_payload())
 
         # Open a modal to edit the prompt
         # Pass the payload to the EditModal constructor
-        edit_modal = EditModal(payload=payload)
+        edit_modal = EditModal(img_request)
         await interaction.response.send_modal(edit_modal)
 
         try:
@@ -113,22 +113,14 @@ class EditButton(discord.ui.Button):
 
 
 class EditModal(ui.Modal, title='Edit Prompt'):
-    def __init__(self, payload, *args, **kwargs):
+    def __init__(self, img_request: ImageRequest, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.payload = payload
-        # Set the default value for the prompt TextInput
-        self.prompt.default = payload.get('prompt', '')
-        # Set the default value for the answer TextInput
-        self.negative_prompt.default = payload.get('negative_prompt', '')
-        # Set the default value for the steps TextInput parse to string to prevent errors
-        print(int(payload.get('steps', 20)))
-        self.steps.default = str(int(payload.get('steps', 20)))
-        # Set the default value for the width TextInput
-        print(int(payload.get('width', 512)))
-        self.width.default = str(int(payload.get('width', 512)))
-        # Set the default value for the height TextInput
-        print(int(payload.get('height', 640)))
-        self.height.default = str(int(payload.get('height', 640)))
+        self.img_request = img_request
+        self.prompt.default = img_request.prompt
+        self.negative_prompt.default = img_request.negative_prompt
+        self.steps.default = str(int(img_request.steps))
+        self.width.default = str(int(img_request.width))
+        self.height.default = str(int(img_request.height))
 
 
     prompt = ui.TextInput(label='Prompt',
@@ -169,28 +161,16 @@ class EditModal(ui.Modal, title='Edit Prompt'):
 
     async def on_submit(self, interaction: discord.Interaction):
         # Get the values from the text inputs
-        prompt = self.prompt.value
-        negative_prompt = self.negative_prompt.value
-
-        # Update the payload with the new values
-        self.payload['prompt'] = prompt
-        self.payload['negative_prompt'] = negative_prompt
-        # Parse the steps value to an integer
-        steps = int(self.steps.value)
-        # Update the payload with the new value
-        self.payload['steps'] = steps
-        # Parse the width value to an integer
-        width = int(self.width.value)
-        # Update the payload with the new value
-        self.payload['width'] = width
-        # Parse the height value to an integer
-        height = int(self.height.value)
-        # Update the payload with the new value
-        self.payload['height'] = height
-
-        # TODO: ADD CFG SCALE and SEED
         
-
+        img_request = ImageRequest()
+        img_request.set_prompt(str(self.prompt.value))
+        img_request.set_negative_prompt(str(self.negative_prompt.value))
+        img_request.set_steps(int(self.steps.value))
+        img_request.set_width(int(self.width.value))
+        img_request.set_height(int(self.height.value))
+        img_request.set_request_type(RequestTypes.TXT2IMG)
+        img_request.set_seed(-1)
+        
         # Acknowledge the interaction
         try:
             await interaction.response.defer()
@@ -198,7 +178,7 @@ class EditModal(ui.Modal, title='Edit Prompt'):
             pass
 
         # Send the request to stable diffusion
-        await sd_request(interaction, self.payload, 'txt2img', defer=True)
+        await sd_request(interaction, img_request, defer=True)
 
     async def on_error(self, interaction: discord.Interaction, error):
         await interaction.response.send_message(f'An error occurred: {error}', ephemeral=True)
