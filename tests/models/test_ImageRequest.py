@@ -103,6 +103,18 @@ class TestImageRequest(unittest.TestCase):
         result = self.image_request.easy_negative(original_negative_prompt)
         self.assertEqual(result, expected_result)
 
+    def test_get_prompt_without_qualities(self):
+        expected_result = "1girl, solo"
+        self.image_request.set_prompt(expected_result)
+        result = self.image_request.get_prompt_without_qualities()
+        self.assertEqual(result, expected_result)
+
+    def test_get_negative_without_qualities(self):
+        expected_result = "upper_body, smile"
+        self.image_request.set_negative_prompt(expected_result)
+        result = self.image_request.get_negative_without_qualities()
+        self.assertEqual(result, expected_result)
+
 
 if __name__ == '__main__':
     unittest.main()

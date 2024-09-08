@@ -12,7 +12,7 @@ class TestEmbedBuilder(unittest.IsolatedAsyncioTestCase):
         builder = EmbedBuilder(img_request=img_request)
         description = builder.build_description()
         self.assertEqual(
-            description, f"**prompt**: score_9, score_8_up, score_7_up, test prompt\n**negative**: fewer digits, extra digits, test negative prompt")
+            description, f"**prompt**: test prompt\n**negative**: test negative prompt")
 
     def test_build_footer(self):
         img_request = ImageRequest(

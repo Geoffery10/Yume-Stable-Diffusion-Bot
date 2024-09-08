@@ -12,6 +12,11 @@ class ImageRequest:
                  seed: int = -1,
                  steps: int = 20,
                  cfg_scale: float = 7):
+        self.good_qualities = "score_9, score_8_up, score_7_up"
+        self.bad_qualities = "fewer digits, extra digits"
+        self.sfw_prompt = "rating_safe"
+        self.sfw_negative = "rating_explicit"
+
         self.set_prompt(prompt)
         self.set_negative_prompt(negative_prompt)
         self.set_width(width)
@@ -76,10 +81,11 @@ class ImageRequest:
             self.seed = seed
 
     def set_not_nsfw(self):
-        if not "rating_safe" in self.prompt:
-            self.prompt = "rating_safe, " + self.prompt
-        if not "rating_explicit" in self.negative_prompt:
-            self.negative_prompt = "rating_explicit, " + self.negative_prompt
+        if not self.sfw_prompt in self.prompt:
+            self.prompt = f"{self.sfw_prompt}, " + self.prompt
+        if not self.sfw_negative in self.negative_prompt:
+            self.negative_prompt = f"{self.sfw_negative}, " + \
+                self.negative_prompt
 
     def set_request_type(self, type: RequestTypes):
         self.request_type = type
@@ -118,12 +124,28 @@ class ImageRequest:
             return dimension
 
     def easy_positive(self, prompt):
-        if not "score_9, score_8_up, score_7_up" in prompt:
-            return "score_9, score_8_up, score_7_up, " + prompt
+        if not self.good_qualities in prompt:
+            return f"{self.good_qualities}, " + prompt
         else:
             return prompt
 
     def easy_negative(self, negative_prompt):
-        if not "fewer digits, extra digits" in negative_prompt:
-            return "fewer digits, extra digits, " + negative_prompt
+        if not self.bad_qualities in negative_prompt:
+            return f"{self.bad_qualities}, " + negative_prompt
         return negative_prompt
+
+    def get_prompt_without_qualities(self):
+        cleaned_prompt = self.prompt
+        if self.good_qualities in self.prompt:
+            cleaned_prompt = cleaned_prompt.replace(
+                f"{self.good_qualities}, ", "")
+
+        return cleaned_prompt
+
+    def get_negative_without_qualities(self):
+        cleaned_prompt = self.negative_prompt
+        if self.bad_qualities in self.negative_prompt:
+            cleaned_prompt = cleaned_prompt.replace(
+                f"{self.bad_qualities}, ", "")
+
+        return cleaned_prompt

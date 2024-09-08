@@ -24,10 +24,10 @@ class EmbedBuilder:
         return embed
 
     def build_description(self):
-        prompt = f"**prompt**: {self.img_request.prompt}"
+        prompt = f"**prompt**: {self.img_request.get_prompt_without_qualities()}"
         negative_prompt = ""
         if self.img_request.negative_prompt != "":
-            negative_prompt = f"\n**negative**: {self.img_request.negative_prompt}"
+            negative_prompt = f"\n**negative**: {self.img_request.get_negative_without_qualities()}"
         return prompt + negative_prompt
 
     def build_footer(self):
