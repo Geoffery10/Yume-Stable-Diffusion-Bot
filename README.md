@@ -16,7 +16,7 @@ A Discord Bot that interfaces with the [AUTOMATIC1111/stable-diffusion-webui](ht
 * [License](#license)
 
 ### Preview
-![image](https://i.postimg.cc/1zdRWC02/image.png)
+![image](./img/screenshot.png)
 
 ## Commands
 * \dream - The main txt2img command
