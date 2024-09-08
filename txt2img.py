@@ -12,6 +12,7 @@ from file_management import parseImage
 from models.EmbedBuilder import EmbedBuilder
 from models.ImageRequest import ImageRequest
 from models.RequestTypes import RequestTypes
+from models.EmbedButton import EmbedButtons
 
 
 async def txt2img(img_request=None):
@@ -62,19 +63,9 @@ async def process_request(interaction, img_request: ImageRequest, defer=True):
 
     # Send embed
     if defer:
-        await interaction.followup.send(embed=embed.get_embed(), file=file, view=txt2img_Buttons())
+        await interaction.followup.send(embed=embed.get_embed(), file=file, view=EmbedButtons())
     else:
-        await interaction.channel.send(embed=embed.get_embed(), file=file, view=txt2img_Buttons())
-
-
-class txt2img_Buttons(discord.ui.View):
-    def __init__(self):
-        super().__init__()
-        import buttons
-        self.add_item(buttons.TryAgain())
-        self.add_item(buttons.EditButton())
-        self.add_item(buttons.DeleteButton())
-        self.add_item(buttons.UpscaleButton())
+        await interaction.channel.send(embed=embed.get_embed(), file=file, view=EmbedButtons())
 
 
 if __name__ == "__main__":
