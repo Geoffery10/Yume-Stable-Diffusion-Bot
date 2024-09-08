@@ -31,7 +31,11 @@ class EmbedBuilder:
         return prompt + negative_prompt
 
     def build_footer(self):
-        footer = f"seed:{self.img_request.seed} • width:{self.img_request.width} • height:{self.img_request.height} • steps:{self.img_request.steps} • cfg_scale:{self.img_request.cfg_scale}"
+        if self.img_request.is_anime:
+            anime_check = "🟢"
+        else:
+            anime_check = "🔴"
+        footer = f"seed:{self.img_request.seed} • width:{self.img_request.width} • height:{self.img_request.height} • steps:{self.img_request.steps} • cfg_scale:{self.img_request.cfg_scale} • anime:{anime_check}"
         if not self.img_request.generation_time == None:
             footer += f" • {math.floor(self.img_request.generation_time)}s"
         return footer

@@ -20,7 +20,7 @@ class TestEmbedBuilder(unittest.IsolatedAsyncioTestCase):
         builder = EmbedBuilder(img_request=img_request)
         footer = builder.build_footer()
         self.assertEqual(
-            footer, "seed:654321 • width:512 • height:512 • steps:20 • cfg_scale:7")
+            footer, "seed:654321 • width:512 • height:512 • steps:20 • cfg_scale:7 • anime:🔴")
 
     def test_build_footer_with_generation_time(self):
         img_request = ImageRequest(

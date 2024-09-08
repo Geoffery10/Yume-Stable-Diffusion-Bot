@@ -28,13 +28,20 @@ class TryAgain(discord.ui.Button):
         print('Payload: ')
         print(img_request.get_payload())
 
+        wait_msg = await interaction.channel.send(f"## Re-dreaming {interaction.user.nick}'s image... <a:loading:1162042559254765699>")
+
         # Send request to stable diffusion
-        await txt2img.process_request(interaction=interaction, img_request=img_request, defer=True)
+        await txt2img.process_request(interaction=interaction, img_request=img_request, defer=False)
         # Respond to the interaction with nothing incase it fails
         try:
             await interaction.response.send_message("")
         except:
             pass
+
+        try:
+            await wait_msg.delete()
+        except:
+            print("Couldn't delete waiting message")
 
 
 class DeleteButton(discord.ui.Button):
@@ -160,7 +167,7 @@ class EditModal(ui.Modal, title='Edit Prompt'):
     async def on_submit(self, interaction: discord.Interaction):
         # Get the values from the text inputs
 
-        img_request = ImageRequest()
+        img_request = ImageRequest(is_anime=self.img_request.is_anime)
         img_request.set_prompt(str(self.prompt.value))
         img_request.set_negative_prompt(str(self.negative_prompt.value))
         img_request.set_steps(int(self.steps.value))
@@ -169,6 +176,8 @@ class EditModal(ui.Modal, title='Edit Prompt'):
         img_request.set_request_type(RequestTypes.TXT2IMG)
         img_request.set_seed(-1)
 
+        wait_msg = await interaction.channel.send(f"## Dreaming {interaction.user.nick}'s image with edits... <a:loading:1162042559254765699>")
+
         # Acknowledge the interaction
         try:
             await interaction.response.defer()
@@ -176,7 +185,12 @@ class EditModal(ui.Modal, title='Edit Prompt'):
             pass
 
         # Send the request to stable diffusion
-        await txt2img.process_request(interaction=interaction, img_request=img_request, defer=True)
+        await txt2img.process_request(interaction=interaction, img_request=img_request, defer=False)
+
+        try:
+            await wait_msg.delete()
+        except:
+            print("Couldn't delete waiting message")
 
     async def on_error(self, interaction: discord.Interaction, error):
         await interaction.response.send_message(f'An error occurred: {error}', ephemeral=True)
