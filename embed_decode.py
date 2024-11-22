@@ -21,8 +21,8 @@ async def decode(input_dict):
     img_request.set_steps(footer_values.get("steps", 20))
     img_request.set_seed(footer_values.get("seed", -1))
     img_request.set_cfg_scale(footer_values.get("cfg_scale", 7))
-    img_request.set_width(footer_values.get("width", 512))
-    img_request.set_height(footer_values.get("height", 512))
+    img_request.set_width(footer_values.get("width", 816))
+    img_request.set_height(footer_values.get("height", 1024))
     if footer_values.get("anime", "🟢"):
         img_request.is_anime = True
     else:
