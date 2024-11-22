@@ -110,7 +110,7 @@ class ImageRequest:
             'sampler_index': self.sampler_index,
             'send_images': self.send_images,
             'save_images': self.save_images,
-            'disable_extra_networks': self.disable_extra_networks,
+            'disable_extra_networks': self.disable_extra_networks
         }
         return json.dumps(data)
 
