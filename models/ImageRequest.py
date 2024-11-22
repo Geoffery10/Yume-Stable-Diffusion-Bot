@@ -13,13 +13,13 @@ class ImageRequest:
                  steps: int = 20,
                  cfg_scale: float = 7,
                  is_anime: bool = False):
-        self.good_qualities = "score_9, score_8_up, score_7_up"
-        self.bad_qualities = "fewer digits, extra digits, score_6, score_5, score_4, watermark"
+        self.good_qualities = "masterpiece, best quality, good quality, newest, "
+        self.bad_qualities = "lowres, worst quality, bad quality, bad anatomy, sketch, jpeg artifacts, signature, watermark, old, oldest"
         self.sfw_prompt = "rating_safe"
         self.sfw_negative = "rating_explicit"
         self.is_anime = is_anime
-        self.anime_prompt = "source_anime"
-        self.anime_negative = "source_pony, source_furry, source_cartoon"
+        self.anime_prompt = ""
+        self.anime_negative = ""
 
         self.set_prompt(prompt)
         self.set_negative_prompt(negative_prompt)
