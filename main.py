@@ -92,7 +92,7 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
     try:
         await interaction.response.defer()
     except Exception as e:
-        print(await sendLog(log=e))
+        print(await sendLog(log=e, client=client))
 
     img_request.set_prompt(prompt)
     img_request.set_negative_prompt(negative)
