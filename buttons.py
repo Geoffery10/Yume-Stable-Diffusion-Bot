@@ -167,7 +167,7 @@ class EditModal(ui.Modal, title='Edit Prompt'):
     async def on_submit(self, interaction: discord.Interaction):
         # Get the values from the text inputs
 
-        img_request = ImageRequest(is_anime=self.img_request.is_anime)
+        img_request = ImageRequest()
         img_request.set_prompt(str(self.prompt.value))
         img_request.set_negative_prompt(str(self.negative_prompt.value))
         img_request.set_steps(int(self.steps.value))

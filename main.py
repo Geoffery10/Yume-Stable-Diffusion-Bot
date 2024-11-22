@@ -83,10 +83,10 @@ myid = '<@1043957906921492562>'
 # ================================== #
 @tree.command(description="Dream of an Image")
 async def dream(interaction: discord.Interaction, prompt: str, negative: str = "", steps: int = 20,
-                seed: int = -1, cfg_scale: int = 7, width: int = 816, height: int = 1024, is_anime: bool = False):
+                seed: int = -1, cfg_scale: int = 7, width: int = 816, height: int = 1024):
     # Dream
     print(await sendLog(log=f'{interaction.user.name} dreaming of {prompt}', client=client))
-    img_request = ImageRequest(is_anime=is_anime)
+    img_request = ImageRequest()
 
     # Acknowledge the interaction
     try:
@@ -107,7 +107,12 @@ async def dream(interaction: discord.Interaction, prompt: str, negative: str = "
         img_request.set_not_nsfw()
 
     # Add the command to the queue
-    await sd_request(interaction, img_request, defer=True)
+    try:
+        await sd_request(interaction, img_request, defer=True)
+    except Exception as e:
+        await interaction.followup.send("An error occurred. If problems persist please reach out to <@253710834553847808>. <:Sakura_Shocked:1285623926038200351>")
+        print(await sendLog(log=e, client=client))
+
 
 # Get the TOKEN variable from the environment
 client.run(TOKEN)

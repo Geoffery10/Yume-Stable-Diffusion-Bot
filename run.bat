@@ -1,2 +1,3 @@
 @echo off
-start "" python main.py
+python main.py
+PAUSE
